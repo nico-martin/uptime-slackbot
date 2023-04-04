@@ -17,33 +17,34 @@ const scheduleUptime = functions.pubsub
       const latest = await db.getLatestEntry();
       functions.logger.log(latest);
 
-      if (!latest || latest.responseOk) {
-        const check = await createRequest();
-
-        if (!check.ok) {
-          functions.logger.log(
-            `Uptime Monitor is DOWN: ${check.url} - StatusCode: ${check.statusCode}`
-          );
-          await sendMessage(
-            `Uptime Monitor is DOWN: ${check.url} - StatusCode: ${check.statusCode}`
-          );
-        }
-
-        const created = await db.createEntry({
-          url: check.url,
-          initialResponseOk: check.ok,
-          responseOk: check.ok,
-          created: firebaseAdmin.firestore.Timestamp.now(),
-          latestCheck: firebaseAdmin.firestore.Timestamp.now(),
-          downtimeMillis: 0,
-        });
-
-        const request = await db.addRequest(created, check);
-
-        functions.logger.log(`uptimeEntry created ${created}`);
-        functions.logger.log(`request created ${request}`);
+      if (latest && !latest.responseOk) {
+        // there is already an ongoing downtime check
         return;
       }
+      const check = await createRequest();
+
+      if (!check.ok) {
+        functions.logger.log(
+          `Uptime Monitor is DOWN: ${check.url} - StatusCode: ${check.statusCode}`
+        );
+        await sendMessage(
+          `Uptime Monitor is DOWN: ${check.url} - StatusCode: ${check.statusCode}`
+        );
+      }
+
+      const created = await db.createEntry({
+        url: check.url,
+        initialResponseOk: check.ok,
+        responseOk: check.ok,
+        created: firebaseAdmin.firestore.Timestamp.now(),
+        latestCheck: firebaseAdmin.firestore.Timestamp.now(),
+        downtimeMillis: 0,
+      });
+
+      const request = await db.addRequest(created, check);
+
+      functions.logger.log(`uptimeEntry created ${created}`);
+      functions.logger.log(`request created ${request}`);
       return;
     } catch (e) {
       functions.logger.error(e);
