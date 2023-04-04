@@ -45,7 +45,7 @@ const requestOnWrite = functions.firestore
         return;
       } else {
         functions.logger.log("request failed, create new request after 2 sec");
-        window.setTimeout(async () => {
+        setTimeout(async () => {
           const check = await createRequest();
           await db.addRequest(uptimeEntry.id, check);
         }, 2000);
