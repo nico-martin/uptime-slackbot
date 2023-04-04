@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 
 const USERNAME = "Uptime Slackbot";
-const ICON_URL = "https://nico.dev/favicon/apple-icon-72x72.png";
+const ICON_URL = "https://nico.dev/favicon/android-icon-192x192.png";
 
 export const sendMessage = async (text: string) => {
   if (!process.env.WEBHOOK) {
