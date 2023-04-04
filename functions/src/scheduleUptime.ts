@@ -21,6 +21,9 @@ const scheduleUptime = functions.pubsub
         const check = await createRequest();
 
         if (!check.ok) {
+          functions.logger.log(
+            `Uptime Monitor is DOWN: ${check.url} - StatusCode: ${check.statusCode}`
+          );
           await sendMessage(
             `Uptime Monitor is DOWN: ${check.url} - StatusCode: ${check.statusCode}`
           );

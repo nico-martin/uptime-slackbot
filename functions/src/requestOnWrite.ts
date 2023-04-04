@@ -27,6 +27,13 @@ const requestOnWrite = functions.firestore
           uptimeEntry.responseOk = true;
           uptimeEntry.downtimeMillis = downtimeMillis;
           await db.update(context.params.uptimeId, uptimeEntry);
+          functions.logger.log(
+            `Uptime Monitor is UP: ${
+              request.url
+            }. It was down for ${formatSeconds(
+              Math.round(downtimeMillis / 1000)
+            )}.`
+          );
           await sendMessage(
             `Uptime Monitor is UP: ${
               request.url
