@@ -4,6 +4,7 @@ firebaseAdmin.initializeApp();
 const firestore = firebaseAdmin.firestore();
 
 export interface UptimeRequest {
+  id?: string;
   url: string;
   ok: boolean;
   statusCode: number;
